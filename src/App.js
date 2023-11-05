@@ -7,12 +7,11 @@ import Screen1 from "./component/Screen1";
 import Screen3 from "./component/Screen3";
 import Layout from "./Layout";
 import RegisterNow from "./component/RegisterNow";
-import { useStateContext } from "./component/StateContext";
-import { Children, useContext } from "react";
+import { MyProvider } from "./component/ValueContext";
 
 function App() {
-  const context = useContext(useStateContext);
   return (
+      <MyProvider>
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Screen1 />} />
@@ -22,6 +21,7 @@ function App() {
         <Route path="/registernow" element={<RegisterNow />} />
       </Route>
     </Routes>
+      </MyProvider>
   );
 }
 

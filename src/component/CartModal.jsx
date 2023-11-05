@@ -1,70 +1,54 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Modal from "react-modal";
 import { Navigate, useNavigate } from "react-router-dom";
+import ValueContext from "./ValueContext";
 const CartModal = ({ isOpen, setIsOpen, icon }) => {
   const openModal = useCallback(() => setIsOpen(true), []);
   const closeModal = useCallback(() => setIsOpen(false), []);
-  let cartCount=1
-  let products=1
-   let total=1
-   let setTotal=1
-   let setCartCount=1
-   let setProducts = 1
-
+  const { setCartCount,cartCount, setTotal,product,pricing } = useContext(ValueContext);
+  setTotal([...product.values()].reduce((acc, value) => acc + value, 0))
   const navigate = useNavigate();
-
+  let total = 0
+  function handlecheckout(){
+    navigate("/checkout")
+    closeModal()
+    setCartCount(0)
+  }
   return (
     <div>
-      <button
-        className="cart-button"
-        style={{ backgroundColor: "transparent" }}
-        type="button"
-        value="Open modal"
-        onClick={openModal}
-      >
-        {icon}
-        <div className="cart-count">{cartCount}</div>
-      </button>
+      <div onClick={openModal} style={{cursor:'pointer',position:"relative",padding:'1rem'}}>{icon}
+      {cartCount>0?<div style={{position:'absolute',top:'0',right:'0',background:'#000',color:'#FFF',borderRadius:'1rem',padding:'0rem 0.4rem',border:'1px solid #FFF'}}>{cartCount}</div>:""}
+      </div>
+      
       <Modal size={"xl"} isOpen={isOpen} onRequestClose={closeModal}>
-        <input
-          type="button"
-          value="x"
-          onClick={closeModal}
-          className="close-button"
-        />
+        <div style={{display:'flex',justifyContent:'end'}}>
+        <button onClick={closeModal} style={{color:'red',border:'none',fontSize:"24px"}}>x</button>
+        </div>
+      
+
         {cartCount > 0 ? (
-          <div className="cart-container">
-            <div className="bottom">
-              <text>Subtotal :-</text>
-              {` ${total}`}
-              <div>
-                <button
-                  className="cart-save"
-                  onClick={() => {
-                    // closeModal();
-                    // setTotal(0)
-                    // setCartCount(0)
-                    // setProducts(
-                    //     products.map((product) =>{
-                    //       return { ...product, qty: 0} }
-                    //     )
-                    //   );
-                    navigate("/checkout");
-                  }}
-                >
-                  Save & Checkout
-                </button>
-                <button className="cart-cancel" onClick={() => closeModal()}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
+          <>
+           <div>
+           <h2>items List</h2>
+           <ul>
+             {Array.from(product.entries()).map(([item, value]) => (
+               total = total + (pricing.get(item) * (value+1)),
+               <li key={item}>
+                 {item} x {value+1} = {pricing.get(item) * (value+1)}
+               </li>
+             ))}
+           </ul>
+         </div>
+         <div>Subtotal :- {total}</div>
+         </>
         ) : (
           <div>
             <text>No Item Added In Cart</text>
           </div>
         )}
+        <button style={{border:'1px solid black',padding:"0.4rem 1rem",borderRadius:'5px',cursor:'pointer',marginTop:"1rem"}} onClick={closeModal}>Cancel</button>
+       {cartCount>0? <button style={{padding:"0.4rem 1rem",cursor:'pointer',border:'1px solid #F5F5F5',marginLeft:'1rem',borderRadius:'5px',background:'#000',color:"#FFF"}} onClick={handlecheckout}>proceed to checkout</button> :""}
+
       </Modal>
     </div>
   );

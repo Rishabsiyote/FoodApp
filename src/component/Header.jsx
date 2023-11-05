@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Spoon } from "../assets/icon/Spoon";
 import Cart from "./Cart";
-import Alert from "./Alert";
 import CartModal from "./CartModal";
 import { useState } from "react";
 function Header(){
